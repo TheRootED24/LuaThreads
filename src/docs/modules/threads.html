@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../luadoc.css" type="text/css" />
+	<!--meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/-->
+</head>
+
+<body>
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+<div id="main">
+
+<div id="navigation">
+
+
+<h1>LuaDoc</h1>
+<ul>
+	
+	<li><a href="../index.html">Index</a></li>
+	
+</ul>
+
+
+<!-- Module list -->
+
+<h1>Modules</h1>
+<ul>
+
+	<li>
+		<a href="threads.html">threads</a>
+	</li>
+
+	<li>
+		<a href="thread/thread.html">threads.thread</a>
+	</li>
+
+	<li>
+		<a href="thread/attr.html">threads.thread.attr</a>
+	</li>
+
+	<li>
+		<a href="thread/cond.html">threads.thread.cond</a>
+	</li>
+
+	<li>
+		<a href="thread/mutex.html">threads.thread.mutex</a>
+	</li>
+
+	<li>
+		<a href="thread/sem.html">threads.thread.sem</a>
+	</li>
+
+	<li><strong>threads</strong></li>
+	
+</ul>
+
+
+
+<!-- File list -->
+
+
+
+
+
+
+
+</div><!-- id="navigation" -->
+
+<div id="content">
+
+<h1>Class <code>threads</code></h1>
+
+<p>
+ Library for viewing Lua Thread Stats.</p>
+
+<h2>Functions</h2>
+<table class="function_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#threads.stats">stats</a>&nbsp;()</td>
+	<td class="summary">Print Lua Threads Stats to stdout.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#threads.completed">completed</a>&nbsp;()</td>
+	<td class="summary"> Returns the number of completed threads.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#threads.yielded">yielded</a>&nbsp;()</td>
+	<td class="summary">Returns the number of yielded threads.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#threads.active">actice</a>&nbsp;()</td>
+	<td class="summary">Returns the number of active threads.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#threads.errored">errored</a>&nbsp;()</td>
+	<td class="summary">Returns the number of errored threads.</td>
+	</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<h2><a name="functions"></a>Functions</h2>
+<dl class="function">
+
+
+<dt><a name="threads.stats"></a><strong>stats</strong>&nbsp;()</dt>
+<dd>
+
+ Print all current threads stats to stdout.
+
+<h3>Usage:</h3>
+<strong>threads.stats()</strong>
+</dd>
+
+<dt><a name="threads.completed"></a><strong>completed</strong>&nbsp;()</dt>
+<dd>
+ Return the number of threads completed (status: OK).
+
+<h3>Usage:</h3>
+
+while( <strong>threads.complete()</strong> < num_threads ) do<br/>
+&nbsp;&nbsp;&nbsp ... <br/>
+end
+
+<h3>Return value:</h3>
+a non negative number value, representing threads completed at the time of the call
+</dd>
+
+
+<dt><a name="threads.yielded"></a><strong>yielded</strong>&nbsp;()</dt>
+<dd>
+
+  Return the number of threads in yielded state (status: SUSPENDED).
+
+<h3>Usage:</h3>
+
+if( <strong>threads.yielded()</strong> > 0 ) then<br/>
+&nbsp;&nbsp;&nbsp ... <br/>
+end
+
+<h3>Return value:</h3>
+a non negative number value, representing threads yeilded at the time of the call
+
+<h3>Demo:</h3>
+<ul>
+
+	<li><a href="../../lua_threads.c">
+		thread-yield
+	</a>
+
+</ul>
+
+<h3>See also:</h3>
+<ul>
+
+	<li><a href="#threads.completed">
+		threads.completed
+	</a>
+
+</ul>
+
+</dd>
+</dd>
+
+<dt><a name="threads.active"></a><strong>active</strong>&nbsp;()</dt>
+<dd>
+
+  Return the number of threads in active state (status: WORKING).<br/>
+  <strong>Notice: active does not count yielded threads</strong>
+
+<h3>Usage:</h3>
+
+while( <strong>threads.active</strong> > 0 ) do<br/>
+&nbsp;&nbsp;&nbsp wait ... <br/>
+end
+
+<h3>Return value:</h3>
+a non negative number value, representing threads active at the time of the call
+
+<h3>See also:</h3>
+<ul>
+
+	<li><a href="#threads.yielded">
+		threads.yielded
+	</a>
+
+</ul>
+</dd>
+
+
+<dt><a name="threads.errored"></a><strong>errored</strong>&nbsp;()</dt>
+<dd>
+ Return the number of threads in active state (status: WORKING).
+
+<h3>Usage:</h3>
+if( <strong>threads.errored</strong> > 0 ) then<br/>
+&nbsp;&nbsp;&nbsp investigate ... <br/>
+end
+
+
+<h3>Return value:</h3>
+ a non negative number value, representing threads that errored before completion (status: ERRORED).<br/>
+
+</dd>
+</dl>
+
+</div> <!-- id="content" -->
+
+</div> <!-- id="main" -->
+
+<div id="about">
+	<p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
+</div> <!-- id="about" -->
+
+</div> <!-- id="container" -->
+</body>
+</html>
