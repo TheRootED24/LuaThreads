@@ -59,6 +59,8 @@ typedef struct {
 	lua_State *T;
 	const char *fn;
 	void *fn_data;
+	void *stack_addr;
+	size_t stack_size;
 	//luaL_Buffer *b;
 
 } threads_thread_t;

@@ -16,13 +16,13 @@
 // not really needed .. attr is destroyed with thread
 static int thread_attr_destroy(lua_State *L) {
 	int ret = -1;
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
+	//if(lua_istable(L, 1)) {
+		//lua_getfield(L, 1, "ctx");
 		threads_thread_t *t = check_threads_thread(L, 2);
 
 		/* destroy initialized attribute */
 		ret = pthread_attr_destroy(&t->attr);
-	}
+	//}
 
 	lua_pushinteger(L, ret);
 
@@ -33,12 +33,12 @@ bool show = false;
 
 static int thread_attr_detachstate(lua_State *L) {
 	int nargs = lua_gettop(L);
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
-		threads_thread_t *t = check_threads_thread(L, -1);
+	//if(lua_istable(L, 1)) {
+		//lua_getfield(L, 1, "ctx");
+		threads_thread_t *t = check_threads_thread(L, 1);
 		int ret = -1, detach_state = -1;
 
-		if(nargs > 1) {
+		if(!show && nargs > 1) {
 			/* set attribute detachedstate */
 			ret = pthread_attr_setdetachstate(&t->attr, PTHREAD_CREATE_DETACHED);
 			lua_pushinteger(L, ret);
@@ -58,21 +58,19 @@ static int thread_attr_detachstate(lua_State *L) {
 		lua_pushstring(L, state);
 
 		return 2;
-	}
-	lua_pushnil(L);
+	//}
 
-	return 1;
 };
 
 static int thread_attr_scope(lua_State *L) {
 	int nargs = lua_gettop(L);
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
-		threads_thread_t *t = check_threads_thread(L, -1);
+	//if(lua_istable(L, 1)) {
+		//lua_getfield(L, 1, "ctx");
+		threads_thread_t *t = check_threads_thread(L, 1);
 		const char *scope;
 		int ret = -1, res = -1;
 
-		if(nargs > 1) {
+		if(!show && nargs > 1) {
 			/* set attribute scope to system */
 			scope = luaL_checkstring(L, 2);
 			if(strcmp(scope, "system") == 0) {
@@ -100,22 +98,20 @@ static int thread_attr_scope(lua_State *L) {
 		lua_pushstring(L, scope);
 
 		return 2;
-	}
-	lua_pushnil(L);
+	//}
 
-	return 1;
 };
 
 static int thread_attr_inheritsched(lua_State *L) {
 	int nargs = lua_gettop(L);
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
-		threads_thread_t *t = check_threads_thread(L, -1);
+	//if(lua_istable(L, 1)) {
+		//lua_getfield(L, 1, "ctx");
+		threads_thread_t *t = check_threads_thread(L, 1);
 		const char *inherit;
 		int inherit_sched;
 		int ret;
 
-		if(nargs > 1) {
+		if(!show && nargs > 1) {
 			/* set attribute scope to system */
 			inherit = luaL_checkstring(L, 2);
 			if(strcmp(inherit, "explicit") == 0) {
@@ -138,28 +134,26 @@ static int thread_attr_inheritsched(lua_State *L) {
 		inherit = (inherit_sched == (PTHREAD_INHERIT_SCHED) ? "PTHREAD_INHERIT_SCHED" : "PTHREAD_EXPLICIT_SCHED");
 		if(show) {
 			printf("Thread: %d Inherit Scheduler: \t[ %s ]\tret: %d\n", t->id, inherit, ret);
+
 			return 0;
 		}
 		lua_pushinteger(L, ret);
 		lua_pushstring(L, inherit);
 
 		return 2;
-	}
-	lua_pushnil(L);
-
-	return 1;
+	//}
 };
 
 static int thread_attr_schedpolicy(lua_State *L) {
 	int nargs = lua_gettop(L);
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
-		threads_thread_t *t = check_threads_thread(L, -1);
+	//if(lua_istable(L, 1)) {
+		//lua_getfield(L, 1, "ctx");
+		threads_thread_t *t = check_threads_thread(L, 1);
 		const char *policy = NULL;
 		int sched_policy = 0;
 		int ret = 0;
 
-		if(nargs > 1) {
+		if(!show && nargs > 1) {
 			policy = luaL_checkstring(L, 2);
 			if(strcmp(policy, "fifo") == 0) {
 				/* set attribute scope to system */
@@ -200,29 +194,26 @@ static int thread_attr_schedpolicy(lua_State *L) {
 		}
 		if(show) {
 			printf("Thread: %d Sched Policy: \t[ %s ]\t\t\tret: %d\n", t->id, policy, ret);
+
 			return 0;
 		}
 		lua_pushinteger(L, ret);
 		lua_pushstring(L, policy);
 
 		return 2;
-	}
-	lua_pushnil(L);
-
-	return 1;
 };
 
 static int thread_attr_schedparam(lua_State *L) {
 	int nargs = lua_gettop(L);
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
+	//if(lua_istable(L, 1)) {
+		//lua_getfield(L, 1, "ctx");
 		threads_thread_t *t = check_threads_thread(L, -1);
 		int newprio = 0;
 		struct sched_param *param = (struct sched_param*)lua_newuserdata(L, sizeof(struct sched_param)); // create a newudata
 		memset(param, 0, sizeof(struct sched_param)); lua_pop(L, 1); // now pop it off the stack
 		int ret = 0;
 
-		if(nargs > 1) {
+		if(!show && nargs > 1) {
 			/* set attribute schedparam(priority) */
 			newprio = luaL_checkinteger(L, 2);
 			param->sched_priority = newprio;
@@ -238,21 +229,19 @@ static int thread_attr_schedparam(lua_State *L) {
 		nargs = param->sched_priority;
 		if(show) {
 			printf("Thread: %d Sched Proiority:\t[ PRIORITY %d ]\t\t\tret: %d\n", t->id, nargs, ret);
+
 			return 0;
 		}
 		lua_pushinteger(L, ret);
 		lua_pushinteger(L, nargs);
 
 		return 2;
-	}
-	lua_pushnil(L);
-
-	return 1;
+	//}
 };
 
 static int thread_attr_stacksize(lua_State *L) {
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
+	//if(lua_istable(L, 1)) {
+		//lua_getfield(L, 1, "ctx");
 		threads_thread_t *t = check_threads_thread(L, -1);
 		size_t stack_size = 0;
 		int ret = 1;
@@ -260,21 +249,18 @@ static int thread_attr_stacksize(lua_State *L) {
 		ret =  pthread_attr_getstacksize(&t->attr, &stack_size);
 		if(show) {
 			printf("Thread: %d Stack size:\t\t[ %zu bytes ]\t\t\tret: %d\n", t->id, stack_size, ret);
+
 			return 0;
 		}
 		lua_pushinteger(L, ret);
 		lua_pushnumber(L, stack_size);
 
 		return 2;
-	}
-	lua_pushnil(L);
-
-	return 1;
 };
 
 static int thread_attr_stackaddr(lua_State *L) {
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
+	//if(lua_istable(L, 1)) {
+		//lua_getfield(L, 1, "ctx");
 		threads_thread_t *t = check_threads_thread(L, -1);
 		int ret = 1;
 		void *stack_addr;
@@ -283,24 +269,22 @@ static int thread_attr_stackaddr(lua_State *L) {
 		/* get attribute stackbase */
 		ret =  pthread_attr_getstack(&t->attr, &stack_addr, &stack_size);
 		if(show) {
-			printf("Thread: %d Stack address:\t[ userdata: 0x0092740 ]\t\tret: %d\n", t->id, ret);
+			printf("Thread: %d Stack address:\t[ userdata: %p ]\tret: %d\n", t->id, stack_addr, ret);
+
 			return 0;
 		}
 		lua_pushinteger(L, ret);
-		lua_pushstring(L, "userdata: 0x0B92740 "); // dummy value
+		lua_pushlightuserdata(L, stack_addr);
 
 		return 2;
-	}
-	lua_pushnil(L);
-
-	return 1;
 };
 
 static int thread_attr_show(lua_State *L) {
 	//lua_settop(L, 1);
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
-		threads_thread_t *t = check_threads_thread(L, -1);
+	//if(lua_istable(L, 1)) {
+		//lua_getfield(L, 1, "ctx");
+		threads_thread_t *t = check_threads_thread(L, 1);
+
 		show = true;
 		printf("\n#################### Thread: %d Attributes ####################\n\n", t->id);
 		thread_attr_detachstate(L);
@@ -311,7 +295,7 @@ static int thread_attr_show(lua_State *L) {
 		thread_attr_stacksize(L);
 		thread_attr_stackaddr(L);
 		show = false;
-	}
+	//}
 
 	return 0;
 }
@@ -319,11 +303,11 @@ static int thread_attr_show(lua_State *L) {
 static const struct luaL_reg thread_attr_lib_m [] = {
 	//{"init", 		thread_attr_init		},
 	{"destroy", 		thread_attr_destroy		},
-	{"detach",		thread_attr_detachstate		},
+	{"detachstate",		thread_attr_detachstate		},
 	{"scope", 		thread_attr_scope		},
-	{"sched_inherit", 	thread_attr_inheritsched	},
-	{"sched_param",		thread_attr_schedparam		},
-	{"sched_policy",	thread_attr_schedpolicy		},
+	{"inheritsched", 	thread_attr_inheritsched	},
+	{"schedparam",		thread_attr_schedparam		},
+	{"schedpolicy",		thread_attr_schedpolicy		},
 	{"stacksize", 		thread_attr_stacksize		},
 	{"stackaddr", 		thread_attr_stackaddr		},
 	{"show", 		thread_attr_show		},
