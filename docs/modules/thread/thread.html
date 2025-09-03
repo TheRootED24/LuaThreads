@@ -102,116 +102,94 @@
 <table class="function_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#threads.thread.new">new</a>&nbsp;( lto )</td>
-	<td class="summary">
-	Create a new lua thread object, or validate a lua thread object passed by a function</td>
+	<td class="name" nowrap><a href="#threads.thread.new">new</a>&nbsp;( to )</td>
+	<td class="summary">Create a new thread object, or validate a thread object passed from a function.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#threads.thread.create">create</a>&nbsp;( lto, func, lto2)</td>
-	<td class="summary">Create (run) a new lua thread, provide it a lua function to run, and optionally, provide parent or partner thread access <strong>lto2</strong></td>
+	<td class="name" nowrap><a href="#threads.thread.create">create</a>&nbsp;( to, func, to2)</td>
+	<td class="summary">Create (run) a new thread.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#threads.thread.yield">yield</a>&nbsp;( lto )</td>
-	<td class="summary">Yield an active lua thread</td>
+	<td class="name" nowrap><a href="#threads.thread.yield">yield</a>&nbsp;( to )</td>
+	<td class="summary">Yield an active thread.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#threads.thread.resume">resume</a>&nbsp;( lto )</td>
-	<td class="summary">Resume a yielded lua thread</td>
+	<td class="name" nowrap><a href="#threads.thread.resume">resume</a>&nbsp;( to )</td>
+	<td class="summary">Resume a yielded thread.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#threads.thread.complete">complete</a>&nbsp;( lto )</td>
-	<td class="summary">Signal an active lua thread to complete and return</td>
+	<td class="name" nowrap><a href="#threads.thread.complete">complete</a>&nbsp;( to )</td>
+	<td class="summary">Signal an active thread to complete and return.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#threads.thread.join">join</a>&nbsp;( lto )</td>
-	<td class="summary">Join a completed lua thread to free the resources</td>
+	<td class="name" nowrap><a href="#threads.thread.join">join</a>&nbsp;( to )</td>
+	<td class="summary">Join a completed thread and free the resources.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#threads.thread.cancel">cancel</a>&nbsp;( lto )</td>
-	<td class="summary">Signal a lua thread to terminate and return </td>
+	<td class="name" nowrap><a href="#threads.thread.cancel">cancel</a>&nbsp;( to )</td>
+	<td class="summary">Signal a thread to terminate and return.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#threads.thread.mutex">mutex</a>&nbsp;( lto )</td>
-	<td class="summary">Access a lua threads internal mutex</td>
+	<td class="name" nowrap><a href="#threads.thread.id">id</a>&nbsp;( to )</td>
+	<td class="summary">Get a threads lua id number.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#threads.thread.sem">sem</a>&nbsp;( lto )</td>
-	<td class="summary">Access a lua threads internal semaphore</td>
+	<td class="name" nowrap><a href="#threads.thread.run">run</a>&nbsp;( to, bool )</td>
+	<td class="summary">Check threads current running state.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#threads.thread.id">id</a>&nbsp;( lto )</td>
-	<td class="summary">Get a lua threads lua id number</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#threads.thread.run">run</a>&nbsp;( lto, bool )</td>
-	<td class="summary">Check lua threads running state.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#threads.thread.state">state</a>&nbsp;( lto )</td>
-	<td class="summary">Check a lua threads execution state</td>
+	<td class="name" nowrap><a href="#threads.thread.state">state</a>&nbsp;( to )</td>
+	<td class="summary">Check a threads current execution state.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#threads.thread.sleep">sleep</a>&nbsp;( sec, nsec )</td>
-	<td class="summary">Force a thread to sleep</td>
+	<td class="summary">Force a thread to sleep.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#threads.threa.exit">exit</a>&nbsp;( lto )</td>
-	<td class="summary">Force a lua thread to exit without returning</td>
+	<td class="name" nowrap><a href="#threads.threa.exit">exit</a>&nbsp;( to )</td>
+	<td class="summary">Force a thread to exit without returning</td>
 	</tr>
-
-
 
 </table>
 
-
-
-
-
-
 <br/>
 <br/>
-
 
 <h2><a name="functions"></a>Functions</h2>
 <dl class="function">
 
-
-
-<dt><a name="threads.thread.new"></a><strong>new</strong>&nbsp;( lto )</dt>
-<dd>
-
- Create a new thread or validate thread passed by function
+<dt><a name="threads.thread.new"></a><strong>new</strong>&nbsp;( to )</dt>
+<dd> Create a new thread or validate thread passed by function.
 
 
 <h3>Parameters</h3>
 <ul>
 	<li>
-	  lto: thread object (optional)
+	  to: Thread object (optional)
 	</li>
 </ul>
 
 
 <h3>Usage:</h3>
-<h5> Create a new thread object </h5>
-local t1 = thread.create() <br/>
-<h5> Validate a passed thread object </h5>
-function func(t)<br/>
-&nbsp;&nbsp;&nbsp;local t = thread.new(t)<br/><br/>
-...
-
+<ul>
+<li> Create a new thread object<br/>
+<code>local t1 = thread.create()</code><br/><br/>
+<li> Validate a passed thread object </li>
+<code>func(nt)<br/>
+&nbsp;&nbsp;&nbsp;local t = thread.new(nt)<br/><br/>
+...</code>
+</ul>
 
 
 <h3>Return value:</h3>
@@ -219,25 +197,25 @@ a valid thread object upon success or error if passed thread is invalid or threa
 </dd>
 
 
-<dt><a name="threads.thread.create"></a><strong>create</strong>&nbsp;(lto, func, lto2)</dt>
-<dd> Create and initiate a new lua thread
+<dt><a name="threads.thread.create"></a><strong>create</strong>&nbsp;(to, func, to2)</dt>
+<dd> Create and initiate a new thread.
 
 <h3>Parameters:</h3>
 <ul>
 	<li>
-	  lto: Lua thread object
+	  to: Thread Object
 	</li>
 	<li>
 	  func: a lua function to run (must be global)
 	</li>
 	<li>
-	  lto2: parent or partner lua thread. (optional)
+	  to2: parent or partner thread. (optional)
 	</li>
 </ul>
 
 <h3>Usage:</h3>
 <ul>
-	<li><h4>Create a single thread</h4><br/>
+	<li>Create a single thread<br/>
 	<code>threads.thread.create(t1, "func")</code><br/><br/>
 	<li>Create a single thread with access to parent/partner<br/>
 	<code>threads.thread.create(t1, "func", t2);</code><br/>
@@ -265,13 +243,13 @@ a valid thread object upon success or error if passed thread is invalid or threa
 </dd>
 
 
-<dt><a name="threads.thread.yield"></a><strong>yield</strong>&nbsp;( lto )</dt>
-<dd> Yield an active lua thread.
+<dt><a name="threads.thread.yield"></a><strong>yield</strong>&nbsp;( to )</dt>
+<dd> Yield an active thread.
 
 <h3>Parameters</h3>
 <ul>
 	<li>
-	  lto: Lua thread object
+	  to: Thread Object
 	</li>
 </ul>
 
@@ -302,13 +280,13 @@ a valid thread object upon success or error if passed thread is invalid or threa
 a valid thread object upon success or error if passed thread is invalid or thread creation fails.<br/>
 </dd>
 
-<dt><a name="thread.thread.resume"></a><strong>resume</strong>&nbsp;( lto )</dt>
-<dd>Resume a yielded lua thread
+<dt><a name="thread.thread.resume"></a><strong>resume</strong>&nbsp;( to )</dt>
+<dd>Resume a yielded thread.
 
 <h3>Parameters</h3>
 <ul>
 	<li>
-	  lto: Lua thread object
+	  to: Thread Object
 	</li>
 </ul>
 
@@ -317,30 +295,13 @@ a valid thread object upon success or error if passed thread is invalid or threa
 0 success 1 on failure
 </dd>
 
-<dt><a name="threads.thread.complete"></a><strong>complete</strong>&nbsp;( lto )</dt>
-<dd> Signal a lua thread to complete its tasks and return.
+<dt><a name="threads.thread.complete"></a><strong>complete</strong>&nbsp;( to )</dt>
+<dd> Signal a thread to complete its tasks and return.
 
 <h3>Parameters</h3>
 <ul>
 	<li>
-	  t: Lua thread object
-	</li>
-</ul>
-
-<h3>Usage:</h3>
-
-
-<h3>Return value:</h3>
-0 success 1 on failure
-</dd>
-
-<dt><a name="threads.thread.join"></a><strong>join</strong>&nbsp;( lto )</dt>
-<dd> Join or wait on a lua thread to finish and free its resouces.
-
-<h3>Parameters</h3>
-<ul>
-	<li>
-	  lto: Lua thread object
+	  t: Thread Object
 	</li>
 </ul>
 
@@ -351,13 +312,13 @@ a valid thread object upon success or error if passed thread is invalid or threa
 0 success 1 on failure
 </dd>
 
-<dt><a name="threads.thread.cancel"></a><strong>cancel</strong>&nbsp;( lto )</dt>
-<dd> Signal a lua thread to terminate and return instantly witout completing task if nessesscary.
+<dt><a name="threads.thread.join"></a><strong>join</strong>&nbsp;( to )</dt>
+<dd> Join or wait on a thread to finish and free its resouces.
 
 <h3>Parameters</h3>
 <ul>
 	<li>
-	  t: Lua thread object
+	  to: Thread Object
 	</li>
 </ul>
 
@@ -368,14 +329,13 @@ a valid thread object upon success or error if passed thread is invalid or threa
 0 success 1 on failure
 </dd>
 
-
-<dt><a name="threads.thread.mutex"></a><strong>mutex</strong>&nbsp;( lto )</dt>
-<dd> Access a lua threads internal mutex
+<dt><a name="threads.thread.cancel"></a><strong>cancel</strong>&nbsp;( to )</dt>
+<dd> Signal a thread to terminate and return.
 
 <h3>Parameters</h3>
 <ul>
 	<li>
-	  lto: Lua thread object
+	  t: Thread Object
 	</li>
 </ul>
 
@@ -383,16 +343,16 @@ a valid thread object upon success or error if passed thread is invalid or threa
 
 
 <h3>Return value:</h3>
-the lua threads internal (initialized) mutex.
+0 success 1 on failure
 </dd>
 
-<dt><a name="threads.thread.sem"></a><strong>sem</strong>&nbsp;( lto )</dt>
-<dd> Access a lua threads internal semaphore
+<dt><a name="threads.thread.run"></a><strong>run</strong>&nbsp;( to )</dt>
+<dd> Get a lua threads running state.
 
 <h3>Parameters</h3>
 <ul>
 	<li>
-	  lto: Lua thread object
+	  to: Thread Object
 	</li>
 </ul>
 
@@ -400,34 +360,17 @@ the lua threads internal (initialized) mutex.
 
 
 <h3>Return value:</h3>
-the lua threads internal (initialized) mutex.
+boolen representing the lua thread objects' running state.
 </dd>
 
-<dt><a name="threads.thread.run"></a><strong>run</strong>&nbsp;( lto )</dt>
-<dd> Get a lua threads running state [ true | false ]
-
-<h3>Parameters</h3>
-<ul>
-	<li>
-	  lto: Lua thread object
-	</li>
-</ul>
-
-<h3>Usage:</h3>
-
-
-<h3>Return value:</h3>
-boolen representing the lua thread objects' running state
-</dd>
-
-<dt><a name="threads.thread.state"></a><strong>state</strong>&nbsp;( lto )</dt>
-<dd> Get a lua threads execution state [ WORKING | SUSPENDED | ERROR | OK ]
+<dt><a name="threads.thread.state"></a><strong>state</strong>&nbsp;( to )</dt>
+<dd> Get a threads execution state. [ WORKING | SUSPENDED | ERROR | OK ]
 
 <h3>Parameters</h3>
 <ul>
 
 	<li>
-	  lto: Lua thread object
+	  to: Thread Object
 	</li>
 </ul>
 
@@ -465,13 +408,13 @@ No vaule returned
 </ul>
 </dd>
 
-<dt><a name="threads.thread.exit"></a><strong>exit</strong>&nbsp;( lto )</dt>
-<dd> Force a lua thread to exit without returning.
+<dt><a name="threads.thread.exit"></a><strong>exit</strong>&nbsp;( to )</dt>
+<dd> Force a thread to exit without returning.
 
 <h3>Parameters</h3>
 <ul>
 	<li>
-	  lto: Lua thread object
+	  to: Thread Object
 	</li>
 </ul>
 
