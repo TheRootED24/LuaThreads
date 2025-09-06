@@ -25,6 +25,7 @@ function yield_test(t)
 		end
 		thread.yield() -- let the cpu tend to something else while we yield
 	end
+	return OK
 end
 
 local function main(...)
@@ -38,8 +39,14 @@ local function main(...)
 		--	cnt = cnt + 1000
 		--end
 	end
-	thread.join(t);
+	local ret = thread.complete(t);
+	--local t1 = thread.new_t(t.thread)
+	print(t.id, t.run, t.state)
+	--if(thread.run(t)) then
+		thread.join(t);
 	print(string.format("Final: %s/%s", tostring(cnt) , tostring(arg[1] or 10)))
+	print( t.id, t.run, t.state)
+	print(threads.stats())
 end
 
 main(...)

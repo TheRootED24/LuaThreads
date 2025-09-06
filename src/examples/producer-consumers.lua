@@ -6,11 +6,11 @@ local mutex = thread.mutex.init();
 local p_cond = thread.cond.new();
 local c_cond = thread.cond.new();
 
-local buf_size = 5;
+local buf_size = 9;
 local buf = {0};
 
 local run = true;
-local shutdown = tonumber(arg[1]) or 10;
+local shutdown = tonumber(arg[1]) or 1000;
 local waiting = false;
 
 -- thread safe print functions --
@@ -47,7 +47,8 @@ end
 -- thread functions must be global !!
 function producer(t)
 	local t = thread.new(t)
-	while(threads.active() > 1 ) do -- producer is the LAST to close
+	--thread.sleep(0,1)
+	while(threads.active() > 1) do -- producer is the LAST to close
 		thread.mutex.lock(mutex);
 		while(#buf == buf_size ) do
 			print_full("Producer", t.id or nil);
@@ -87,6 +88,7 @@ function producer(t)
 	end
 
 	print(string.format("Producer: %d Shutting Down ...", t.id));
+	--print(threads_active())
 	thread.complete(t); -- thats all folks
 end
 
@@ -94,7 +96,7 @@ function consumer(t, pt)
 	local t = thread.new(t);
 	local pt = thread.new(pt); -- access to the producer thread
 	--print(string.format("PRODUCER THREAD ID: %d\n", pt.id))
-	while(shutdown > 1) do
+	while(shutdown > 0) do
 		thread.mutex.lock(mutex);
 		while(#buf == 0 and threads.active() > 1) do
 			print_empty("Consumer: ", t.id or nil)
@@ -127,24 +129,25 @@ local function main(arg)
 	local t6 = thread.new();
 	local t7 = thread.new();
 	local t8 = thread.new();
-	--local t9 = thread.new();
-	--local t10 = thread.new();
+	local t9 = thread.new();
+	local t10 = thread.new();
 
 
 
-	-- producer
-	local ret = thread.create(t1, "producer");
+	
 
 	-- consumers
 	ret = thread.create(t2, "consumer");
 	ret = thread.create(t3, "consumer");
+	-- producer
+	local ret = thread.create(t1, "producer");
 	ret = thread.create(t4, "consumer");
 	ret = thread.create(t5, "consumer");
 	ret = thread.create(t6, "consumer");
 	ret = thread.create(t7, "consumer");
 	ret = thread.create(t8, "consumer");
-	--ret = thread.create(t9, "consumer");
-	--ret = thread.create(t10, "consumer");
+	ret = thread.create(t9, "consumer");
+	ret = thread.create(t10, "consumer");
 
 
 
@@ -156,8 +159,8 @@ local function main(arg)
 	ret = thread.join(t6);
 	ret = thread.join(t7);
 	ret = thread.join(t8);
-	--ret = thread.join(t9);
-	--ret = thread.join(t10);
+	ret = thread.join(t9);
+	ret = thread.join(t10);
 
 
 

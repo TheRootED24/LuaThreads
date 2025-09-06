@@ -102,224 +102,94 @@
 <table class="function_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#threads.thread.new">new</a>&nbsp;(tid)</td>
-	<td class="summary">
-	Create a new lua thread object, or validate a lua thread object passed by a function</td>
+	<td class="name" nowrap><a href="#threads.thread.new">new</a>&nbsp;( to )</td>
+	<td class="summary">Create a new thread object, or validate a thread object passed from a function.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#threads.thread.create">create</a>&nbsp;(t1, func, opt-t2)</td>
-	<td class="summary">Create (run) a new lua thread, provide it a lua function to run, and optionally, provide parent or partner thread access <strong>opt-t2</strong></td></td>
+	<td class="name" nowrap><a href="#threads.thread.create">create</a>&nbsp;( to, func, to2)</td>
+	<td class="summary">Create (run) a new thread.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#threads.thread.yield">yield</a>&nbsp;( t )</td>
-	<td class="summary">Yield an active lua thread</td>
+	<td class="name" nowrap><a href="#threads.thread.yield">yield</a>&nbsp;( to )</td>
+	<td class="summary">Yield an active thread.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.chown">chown</a>&nbsp;(path, user, group)</td>
-	<td class="summary">
- (POSIX) Change owner and group of a file.</td>
+	<td class="name" nowrap><a href="#threads.thread.resume">resume</a>&nbsp;( to )</td>
+	<td class="summary">Resume a yielded thread.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.copy">copy</a>&nbsp;(src, dest)</td>
-	<td class="summary">
- Copy a file, directory or symlink non-recursively preserving file mode, 
- timestamps, owner and group.</td>
+	<td class="name" nowrap><a href="#threads.thread.complete">complete</a>&nbsp;( to )</td>
+	<td class="summary">Signal an active thread to complete and return.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.copyr">copyr</a>&nbsp;(src, dest)</td>
-	<td class="summary">
- Copy a file, directory or symlink recursively preserving file mode, 
- timestamps, owner and group.</td>
+	<td class="name" nowrap><a href="#threads.thread.join">join</a>&nbsp;( to )</td>
+	<td class="summary">Join a completed thread and free the resources.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.datacopy">datacopy</a>&nbsp;(src, dest, limit)</td>
-	<td class="summary">
- Copy data between files.</td>
+	<td class="name" nowrap><a href="#threads.thread.cancel">cancel</a>&nbsp;( to )</td>
+	<td class="summary">Signal a thread to terminate and return.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.dir">dir</a>&nbsp;(path)</td>
-	<td class="summary">
- Iterate over the entries of a directory.</td>
+	<td class="name" nowrap><a href="#threads.thread.id">id</a>&nbsp;( to )</td>
+	<td class="summary">Get a threads lua id number.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.dirname">dirname</a>&nbsp;(path)</td>
-	<td class="summary">
- Strip the base from a path.</td>
+	<td class="name" nowrap><a href="#threads.thread.run">run</a>&nbsp;( to, bool )</td>
+	<td class="summary">Check threads current running state.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.glob">glob</a>&nbsp;(pattern)</td>
-	<td class="summary">
- (POSIX) Find pathnames matching a pattern.</td>
+	<td class="name" nowrap><a href="#threads.thread.state">state</a>&nbsp;( to )</td>
+	<td class="summary">Check a threads current execution state.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.lchown">lchown</a>&nbsp;(path, user, group)</td>
-	<td class="summary">
- (POSIX) Change owner and group of a file and do not resolve 
- if target is a symlink.</td>
+	<td class="name" nowrap><a href="#threads.thread.sleep">sleep</a>&nbsp;( sec, nsec )</td>
+	<td class="summary">Force a thread to sleep.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.link">link</a>&nbsp;(oldpath, newpath)</td>
-	<td class="summary">
- Create a hard link.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.lstat">lstat</a>&nbsp;(path, field)</td>
-	<td class="summary">
- Get file status and attributes and do not resolve if target is a symlink.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.mkdir">mkdir</a>&nbsp;(path, mode)</td>
-	<td class="summary">
- Create a new directory.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.mkdirr">mkdirr</a>&nbsp;(dest, mode)</td>
-	<td class="summary">
- Create a directory and all needed parent directories recursively.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.mkfifo">mkfifo</a>&nbsp;(path, mode)</td>
-	<td class="summary">
- (POSIX) Create a FIFO (named pipe).</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.move">move</a>&nbsp;(src, dest)</td>
-	<td class="summary">
- Rename a file, directory or symlink non-recursively across filesystems.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.mover">mover</a>&nbsp;(src, dest)</td>
-	<td class="summary">
- Rename a file, directory or symlink recursively across filesystems.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.readfile">readfile</a>&nbsp;(path, limit)</td>
-	<td class="summary">
- Read the contents of a file into a buffer.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.readlink">readlink</a>&nbsp;(path)</td>
-	<td class="summary">
- (POSIX) Read the target of a symbolic link.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.realpath">realpath</a>&nbsp;(path)</td>
-	<td class="summary">
- Return the cannonicalized absolute pathname.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.remove">remove</a>&nbsp;(path)</td>
-	<td class="summary">
- Remove a file or directory.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.rename">rename</a>&nbsp;(src, dest)</td>
-	<td class="summary">
- Renames a file or directory.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.rmdir">rmdir</a>&nbsp;(path)</td>
-	<td class="summary">
- Remove an empty directory.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.stat">stat</a>&nbsp;(path, field)</td>
-	<td class="summary">
- Get file status and attributes.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.statvfs">statvfs</a>&nbsp;(path)</td>
-	<td class="summary">
- (POSIX) Get filesystem statistics.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.symlink">symlink</a>&nbsp;(oldpath, newpath)</td>
-	<td class="summary">
- (POSIX) Create a symbolic link.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.unlink">unlink</a>&nbsp;(path)</td>
-	<td class="summary">
- Delete a name and - if no links are left - the associated file.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.utimes">utimes</a>&nbsp;(path, actime, mtime)</td>
-	<td class="summary">
- Change file last access and last modification time.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#nixio.fs.writefile">writefile</a>&nbsp;(path, data)</td>
-	<td class="summary">
- Write a buffer into a file truncating the file first.</td>
+	<td class="name" nowrap><a href="#threads.threa.exit">exit</a>&nbsp;( to )</td>
+	<td class="summary">Force a thread to exit without returning</td>
 	</tr>
 
 </table>
 
-
-
-
-
-
 <br/>
 <br/>
-
 
 <h2><a name="functions"></a>Functions</h2>
 <dl class="function">
 
-
-
-<dt><a name="threads.thread.new"></a><strong>new</strong>&nbsp;(t)</dt>
-<dd>
-
- Create a new thread or validate thread passed by function
+<dt><a name="threads.thread.new"></a><strong>new</strong>&nbsp;( to )</dt>
+<dd> Create a new thread or validate thread passed by function.
 
 
 <h3>Parameters</h3>
 <ul>
 	<li>
-	  t: thread object (optional)
+	  to: Thread object (optional)
 	</li>
 </ul>
 
 
 <h3>Usage:</h3>
-<h5> Create a new thread object </h5>
-local t1 = thread.create() <br/>
-<h5> Validate a passed thread object </h5>
-function func(t)<br/>
-&nbsp;&nbsp;&nbsp;local t = thread.new(t)<br/><br/>
-...
-
+<ul>
+<li> Create a new thread object<br/>
+<code>local t1 = thread.create()</code><br/><br/>
+<li> Validate a passed thread object </li>
+<code>func(nt)<br/>
+&nbsp;&nbsp;&nbsp;local t = thread.new(nt)<br/><br/>
+...</code>
+</ul>
 
 
 <h3>Return value:</h3>
@@ -327,1143 +197,277 @@ a valid thread object upon success or error if passed thread is invalid or threa
 </dd>
 
 
-<dt><a name="threads.thread.create"></a><strong>create</strong>&nbsp;(t1, func, opt-t2)</dt>
-<dd>
+<dt><a name="threads.thread.create"></a><strong>create</strong>&nbsp;(to, func, to2)</dt>
+<dd> Create and initiate a new thread.
 
- Change the file mode.
-
-
-<h3>Parameters</h3>
+<h3>Parameters:</h3>
 <ul>
-
 	<li>
-	  t1: valid lua thread object
+	  to: Thread Object
 	</li>
-
 	<li>
 	  func: a lua function to run (must be global)
 	</li>
 	<li>
-	  opt-t2: valid lua parent or partner thread.
+	  to2: parent or partner thread. (optional)
 	</li>
 </ul>
 
-
-
-
-<h3>Usage</h3>
+<h3>Usage:</h3>
 <ul>
-	<h5>single thread</h5>
-	threads.thread.create(t1, "func")<br/>
-	<h5>single thread with access to parent/partner</h5>
-	threads.thread.create(t1, "print_tid", t2);<br/>
+	<li>Create a single thread<br/>
+	<code>threads.thread.create(t1, "func");</code><br/><br/>
+	<li>Create a single thread with access to parent/partner<br/>
+	<code>threads.thread.create(t1, "func", t2);</code><br/>
 </ul>
-	
-<h3>Demo</h3>
-<ul>
-	<h5>single thread</h5>
-	function print_tid(t)<br/>
-	&nbsp;&nbsp;&nbsp;local t = thread.new(t);<br/>
-	&nbsp;&nbsp;&nbsp;print(t.id)<br/>
-	end<br/><br/>
-	local function main(...)<br/>
-	&nbsp;&nbsp;&nbsp;local t1 = thread.new();<br/>
-	&nbsp;&nbsp;&nbsp;local ret;<br/>
-	&nbsp;&nbsp;&nbsp;ret = threads.thread.create(t1, "print_tid");<br/>
-	&nbsp;&nbsp;&nbsp;ret = threads.thread.join(t1);<br/>
-	end<br/>
-	
-	<h5>single thread with access to parent/partner</h5>
-	function print_tid(t, pt)<br/>
-	&nbsp;&nbsp;&nbsp;local t = thread.new(t);<br/>
-	&nbsp;&nbsp;&nbsp;local pt = thread.new(pt);<br/>
-	&nbsp;&nbsp;&nbsp;print(t.id, pt.id)<br/>
-	end<br/><br/>
-	local function main(...)<br/>
-	&nbsp;&nbsp;&nbsp;local t1 = thread.new();<br/>
-	&nbsp;&nbsp;&nbsp;local t2 = thread.new();<br/><br/>
-	&nbsp;&nbsp;&nbsp;local ret = threads.thread.create(t1, "print_tid", t2);<br/>
-	&nbsp;&nbsp;&nbsp;ret = threads.thread.join(t1);<br/>
-	&nbsp;&nbsp;&nbsp;ret = threads.thread.join(t2);<br/>
-	end<br/>
-
-</ul>
-
-
 
 <h3>Return value:</h3>
 0 if thread is created or non zero errno value if creation fails 
-
-
 
 <h3>See also:</h3>
 <ul>
 	<li><a href="threads.thread.new">
 		threads.thread.new
 	</a>
-	
 	<li><a href="threads.thread.join">
 		threads.thread.join
 	</a>
-	
-</ul>
 
+</ul>
+<h3>Demo</h3>
+<ul>
+	<li><a href="threads.thread.new">
+			simple-thread-demo
+	</a></li>
+</ul>
 </dd>
 
 
-<dt><a name="threads.thread.yield"></a><strong>yield</strong>&nbsp;( t )</dt>
-<dd>
-
- Yield an active lua thread
-
+<dt><a name="threads.thread.yield"></a><strong>yield</strong>&nbsp;( to )</dt>
+<dd> Yield an active thread.
 
 <h3>Parameters</h3>
 <ul>
 	<li>
-	  t: valid thread object
+	  to: Thread Object
 	</li>
 </ul>
 
+<h3>Usage:</h3>
+<code>
+	function produce( producer )<br/>
+	&nbsp;&nbsp;local t = thread.new(t);<br/>
+	&nbsp;&nbsp;while( thread.state(producer) == WORKING) do <br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;buf[#buf+1] = new_data<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;thread.yield(producer)<br/>
+	&nbsp;&nbsp;end<br/><br/>
+
+
+</code>
+
+
+<h3>Return value:</h3>
+a valid thread object upon success or error if passed thread is invalid or thread creation fails.<br/>
+</dd>
+
+<dt><a name="thread.thread.resume"></a><strong>resume</strong>&nbsp;( to )</dt>
+<dd>Resume a yielded thread.
+
+<h3>Parameters</h3>
+<ul>
+	<li>
+	  to: Thread Object
+	</li>
+</ul>
 
 <h3>Usage:</h3>
-<h5>Yield a thread</h5>
-	require "threads"<br/>
-	local thread = threads.thread;<br/><br/>
-	
-	function print_tid( t )<br/>
-	&nbsp;&nbsp;&nbsp;local t = thread.new(t);<br/>
-	while( thread.state(t) == WORKING) do -- or t:state()<br/>
-	&nbsp;&nbsp;&nbsp;print(t.id)<br/>
-	<strong>&nbsp;&nbsp;&nbsp;thread.yield(t) -- or t:yield()<br/></strong>
+<code>
+	while(need_more < complete) do<br/>
+		&nbsp;&nbsp;if(thread.resume(producer) ~= 0) then<br/>
+			&nbsp;&nbsp;&nbsp;&nbsp;thread.error(consumer)<br/>
+			&nbsp;&nbsp;&nbsp;&nbsp;break;<br/>
+		&nbsp;&nbsp;end<br/>
+	end
+</code>
+
+<h3>Return value:</h3>
+0 success 1 on failure
+</dd>
+
+<dt><a name="threads.thread.complete"></a><strong>complete</strong>&nbsp;( to )</dt>
+<dd> Signal a thread to complete its tasks and return.
+
+<h3>Parameters</h3>
+<ul>
+	<li>
+	  t: Thread Object
+	</li>
+</ul>
+
+<h3>Usage:</h3>
+<code>
+	if(task == done) then return(thread.complete(t)) end
+</code>
+
+
+<h3>Return value:</h3>
+0 success 1 on failure
+</dd>
+
+<dt><a name="threads.thread.join"></a><strong>join</strong>&nbsp;( to )</dt>
+<dd> Join or wait on a thread to finish and free its resouces.
+
+<h3>Parameters</h3>
+<ul>
+	<li>
+	  to: Thread Object
+	</li>
+</ul>
+
+<h3>Usage:</h3>
+<code>
+	local ret = thread.join(t);<br/><br/>
+	if(ret == 0) then<br/>
+		&nbsp;&nbsp;print("success")<br/>
+	else<br/>
+		&nbsp;&nbsp;print("failed to join thread");<br/>
+	end<br/>
+</code>
+
+<h3>Return value:</h3>
+0 success 1 on failure
+</dd>
+
+<dt><a name="threads.thread.cancel"></a><strong>cancel</strong>&nbsp;( to )</dt>
+<dd> Signal a thread to terminate and return.
+
+<h3>Parameters</h3>
+<ul>
+	<li>
+	  t: Thread Object
+	</li>
+</ul>
+
+<h3>Usage:</h3>
+<code>
+	if(thread.state(parent) == ERROR) then <br/>
+		&nbsp;&nbsp;local ret = thread.cancel(child))<br/><br/>
+		&nbsp;&nbsp;if( ret == 0 ) then<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;thread.join(child);<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;thread.join(parent);<br/>
+		&nbsp;&nbsp;end<br/>
+</code>
+
+<h3>Return value:</h3>
+0 success 1 on failure
+</dd>
+
+<dt><a name="threads.thread.run"></a><strong>run</strong>&nbsp;( to )</dt>
+<dd> Get a lua threads running state.
+
+<h3>Parameters</h3>
+<ul>
+	<li>
+	  to: Thread Object
+	</li>
+</ul>
+
+<h3>Usage:</h3>
+<code>
+	while(thread.run(t)) do<br/>
+	&nbsp;&nbsp;thread.yeild() -- wait for thread "t" to finish<br/>
 	end<br/><br/>
-	
-	local function main(...)<br/>
-	&nbsp;&nbsp;&nbsp;local t1 = thread.new();<br/>
-	&nbsp;&nbsp;&nbsp;local ret = thread.create(t1, "print_tid", t2);<br/><br/>
-	&nbsp;&nbsp;&nbsp;for i=1, 10 do<br/>
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;thread.resume(t1) -- or t1:resume()<br/>
-	&nbsp;&nbsp;&nbsp;end<br/>
-	&nbsp;&nbsp;&nbsp;ret = thread.join(t1);<br/>
+	thread.join(t)<br/>
+</code>
+
+<h3>Return value:</h3>
+true if running, false if complete or errored
+</dd>
+
+<dt><a name="threads.thread.state"></a><strong>state</strong>&nbsp;( to )</dt>
+<dd> Get a threads execution state. [ WORKING | SUSPENDED | ERROR | OK ]
+
+<h3>Parameters</h3>
+<ul>
+
+	<li>
+	  to: Thread Object
+	</li>
+</ul>
+
+<h3>Usage:</h3>
+<code>
+	while(thread.run(t)) do<br/><br/>
+	&nbsp;&nbsp;while(thread.state(t) == WORKING) do<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;some work -- do some work<br/>
+	&nbsp;&nbsp;end<br/><br/>
+	&nbsp;&nbsp;while(thread.state(t) == SUSPENEDED) do<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp;do other work -- do something else, while yielded from main thread<br/>
+	&nbsp;&nbsp;end<br/><br/>
+	&nbsp;&nbsp;if(thread.state(t) == OK) then return 0 end<br/><br/>
+	&nbsp;&nbsp;if(thread.state(t) == ERROR) then return 1 end<br/><br/>
 	end<br/>
 
-
+</code>
 
 <h3>Return value:</h3>
-a valid thread object upon success or error if passed thread is invalid or thread creation fails<br/>
+An state enum, representing the thread objects' execution state.
 </dd>
 
-<dt><a name="nixio.fs.chown"></a><strong>chown</strong>&nbsp;(path, user, group)</dt>
-<dd>
-
- (POSIX) Change owner and group of a file.
-
+<dt><a name="nixio.fs.lstat"></a><strong>sleep</strong>&nbsp;( sec, nsec )</dt>
+<dd> Force a thread to sleep for seconds or nano-seconds.
 
 <h3>Parameters</h3>
 <ul>
-	
 	<li>
-	  path: Path
+	  sec: Integer value representing seconds to sleep
 	</li>
-	
 	<li>
-	  user: User ID or Username		(optional)
+	  nsec: Integer value representing nano seconds to sleep
 	</li>
-	
-	<li>
-	  group: Group ID or Groupname	(optional)
-	</li>
-	
 </ul>
-
-
-
-
-
-
-<h3>Return value:</h3>
-true
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.copy"></a><strong>copy</strong>&nbsp;(src, dest)</dt>
-<dd>
-
- Copy a file, directory or symlink non-recursively preserving file mode, 
- timestamps, owner and group.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  src: Source path
-	</li>
-	
-	<li>
-	  dest: Destination path
-	</li>
-	
-</ul>
-
-
-
 
 <h3>Usage:</h3>
-The destination must always be a full destination path e.g. do not 
- omit the basename even if source and destination basename are equal. 
-
 
 
 <h3>Return value:</h3>
-true
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.copyr"></a><strong>copyr</strong>&nbsp;(src, dest)</dt>
-<dd>
-
- Copy a file, directory or symlink recursively preserving file mode, 
- timestamps, owner and group.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  src: Source path
-	</li>
-	
-	<li>
-	  dest: Destination path
-	</li>
-	
-</ul>
-
-
-
-
-<h3>Usage:</h3>
-The destination must always be a full destination path e.g. do not 
- omit the basename even if source and destination basename are equal. 
-
-
-
-<h3>Return value:</h3>
-true
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.datacopy"></a><strong>datacopy</strong>&nbsp;(src, dest, limit)</dt>
-<dd>
-
- Copy data between files.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  src: Source file path
-	</li>
-	
-	<li>
-	  dest: Destination file path
-	</li>
-	
-	<li>
-	  limit: Maximum bytes to copy (optional)
-	</li>
-	
-</ul>
-
-
-
-
-
-
-<h3>Return value:</h3>
-true
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.dir"></a><strong>dir</strong>&nbsp;(path)</dt>
-<dd>
-
- Iterate over the entries of a directory.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  path: Path
-	</li>
-	
-</ul>
-
-
-
-
-<h3>Usage:</h3>
-The special entries "." and ".." are omitted.
-
-
-
-<h3>Return value:</h3>
-directory iterator returning one entry per call
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.dirname"></a><strong>dirname</strong>&nbsp;(path)</dt>
-<dd>
-
- Strip the base from a path.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  path: Path
-	</li>
-	
-</ul>
-
-
-
-
-<h3>Usage:</h3>
-This function cannot fail and will never return nil.
-
-
-
-<h3>Return value:</h3>
-dirname
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.glob"></a><strong>glob</strong>&nbsp;(pattern)</dt>
-<dd>
-
- (POSIX) Find pathnames matching a pattern.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  pattern: Pattern
-	</li>
-	
-</ul>
-
-
-
-
-
-
-<h3>Return values:</h3>
-<ol>
-	
-	<li>path iterator
-	
-	<li>number of matches
-	
-</ol>
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.lchown"></a><strong>lchown</strong>&nbsp;(path, user, group)</dt>
-<dd>
-
- (POSIX) Change owner and group of a file and do not resolve 
- if target is a symlink.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  path: Path
-	</li>
-	
-	<li>
-	  user: User ID or Username		(optional)
-	</li>
-	
-	<li>
-	  group: Group ID or Groupname	(optional)
-	</li>
-	
-</ul>
-
-
-
-
-
-
-<h3>Return value:</h3>
-true
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.link"></a><strong>link</strong>&nbsp;(oldpath, newpath)</dt>
-<dd>
-
- Create a hard link.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  oldpath: Path
-	</li>
-	
-	<li>
-	  newpath: Path
-	</li>
-	
-</ul>
-
-
-
-
-<h3>Usage:</h3>
-This function calls link() on POSIX and CreateHardLink() on Windows.
-
-
-
-<h3>Return value:</h3>
-true
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.lstat"></a><strong>lstat</strong>&nbsp;(path, field)</dt>
-<dd>
-
- Get file status and attributes and do not resolve if target is a symlink.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  path: Path
-	</li>
-	
-	<li>
-	  field: Only return a specific field, not the whole table (optional)
-	</li>
-	
-</ul>
-
-
-
-
-
-
-<h3>Return value:</h3>
-Table containing attributes (see stat for a detailed description)
-
-
+No vaule returned
 
 <h3>See also:</h3>
 <ul>
-	
 	<li><a href="#nixio.fs.stat">
 		stat
 	</a>
-	
 </ul>
-
 </dd>
 
-
-
-
-<dt><a name="nixio.fs.mkdir"></a><strong>mkdir</strong>&nbsp;(path, mode)</dt>
-<dd>
-
- Create a new directory.
-
+<dt><a name="threads.thread.exit"></a><strong>exit</strong>&nbsp;( to )</dt>
+<dd> Force a thread to exit without returning.
 
 <h3>Parameters</h3>
 <ul>
-	
 	<li>
-	  path: Path
+	  to: Thread Object
 	</li>
-	
-	<li>
-	  mode: File mode (optional, see chmod and umask)
-	</li>
-	
 </ul>
 
-
-
-
+<h3>Usage:</h3>
 
 
 <h3>Return value:</h3>
-true
-
-
+0 success 1 on failure
 
 <h3>See also:</h3>
 <ul>
-	
-	<li><a href="#nixio.fs.chmod">
-		chmod
+	<li><a href="#threads.thread.complete">
+		thread.complete(t)
 	</a>
-	
-	<li><a href="">
-		umask
+	<li><a href="threads.thread.cancel">
+		thread.cancel
 	</a>
-	
 </ul>
-
 </dd>
-
-
-
-
-<dt><a name="nixio.fs.mkdirr"></a><strong>mkdirr</strong>&nbsp;(dest, mode)</dt>
-<dd>
-
- Create a directory and all needed parent directories recursively. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  dest: Destination path
-	</li>
-	
-	<li>
-	  mode: File mode (optional, see chmod and umask)
-	</li>
-	
-</ul>
-
-
-
-
-
-
-<h3>Return value:</h3>
-true
-
-
-
-<h3>See also:</h3>
-<ul>
-	
-	<li><a href="#nixio.fs.chmod">
-		chmod
-	</a>
-	
-	<li><a href="">
-		umask
-	</a>
-	
-</ul>
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.mkfifo"></a><strong>mkfifo</strong>&nbsp;(path, mode)</dt>
-<dd>
-
- (POSIX) Create a FIFO (named pipe).
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  path: Path
-	</li>
-	
-	<li>
-	  mode: File mode (optional, see chmod and umask)
-	</li>
-	
-</ul>
-
-
-
-
-
-
-<h3>Return value:</h3>
-true
-
-
-
-<h3>See also:</h3>
-<ul>
-	
-	<li><a href="#nixio.fs.chmod">
-		chmod
-	</a>
-	
-	<li><a href="">
-		umask
-	</a>
-	
-</ul>
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.move"></a><strong>move</strong>&nbsp;(src, dest)</dt>
-<dd>
-
- Rename a file, directory or symlink non-recursively across filesystems.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  src: Source path
-	</li>
-	
-	<li>
-	  dest: Destination path
-	</li>
-	
-</ul>
-
-
-
-
-<h3>Usage:</h3>
-The destination must always be a full destination path e.g. do not 
- omit the basename even if source and destination basename are equal. 
-
-
-
-<h3>Return value:</h3>
-true
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.mover"></a><strong>mover</strong>&nbsp;(src, dest)</dt>
-<dd>
-
- Rename a file, directory or symlink recursively across filesystems.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  src: Source path
-	</li>
-	
-	<li>
-	  dest: Destination path
-	</li>
-	
-</ul>
-
-
-
-
-<h3>Usage:</h3>
-The destination must always be a full destination path e.g. do not 
- omit the basename even if source and destination basename are equal. 
-
-
-
-<h3>Return value:</h3>
-true
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.readfile"></a><strong>readfile</strong>&nbsp;(path, limit)</dt>
-<dd>
-
- Read the contents of a file into a buffer.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  path: Path
-	</li>
-	
-	<li>
-	  limit: Maximum bytes to read (optional)
-	</li>
-	
-</ul>
-
-
-
-
-
-
-<h3>Return value:</h3>
-file contents
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.readlink"></a><strong>readlink</strong>&nbsp;(path)</dt>
-<dd>
-
- (POSIX) Read the target of a symbolic link.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  path: Path
-	</li>
-	
-</ul>
-
-
-
-
-
-
-<h3>Return value:</h3>
-target path
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.realpath"></a><strong>realpath</strong>&nbsp;(path)</dt>
-<dd>
-
- Return the cannonicalized absolute pathname.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  path: Path
-	</li>
-	
-</ul>
-
-
-
-
-
-
-<h3>Return value:</h3>
-absolute path
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.remove"></a><strong>remove</strong>&nbsp;(path)</dt>
-<dd>
-
- Remove a file or directory.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  path: Path
-	</li>
-	
-</ul>
-
-
-
-
-
-
-<h3>Return value:</h3>
-true
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.rename"></a><strong>rename</strong>&nbsp;(src, dest)</dt>
-<dd>
-
- Renames a file or directory.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  src: Source path
-	</li>
-	
-	<li>
-	  dest: Destination path
-	</li>
-	
-</ul>
-
-
-
-
-<h3>Usage:</h3>
-It is normally not possible to rename files across filesystems.
-
-
-
-<h3>Return value:</h3>
-true
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.rmdir"></a><strong>rmdir</strong>&nbsp;(path)</dt>
-<dd>
-
- Remove an empty directory.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  path: Path
-	</li>
-	
-</ul>
-
-
-
-
-
-
-<h3>Return value:</h3>
-true
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.stat"></a><strong>stat</strong>&nbsp;(path, field)</dt>
-<dd>
-
- Get file status and attributes.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  path: Path
-	</li>
-	
-	<li>
-	  field: Only return a specific field, not the whole table (optional)
-	</li>
-	
-</ul>
-
-
-
-
-
-
-<h3>Return value:</h3>
-Table containing: <ul> 
- <li>atime = Last access timestamp</li> 
- <li>blksize = Blocksize (POSIX only)</li> 
- <li>blocks = Blocks used (POSIX only)</li> 
- <li>ctime = Creation timestamp</li> 
- <li>dev = Device ID</li> 
- <li>gid = Group ID</li> 
- <li>ino = Inode</li> 
- <li>modedec = Mode converted into a decimal number</li> 
- <li>modestr = Mode as string as returned by <code>ls -l</code></li> 
- <li>mtime = Last modification timestamp</li> 
- <li>nlink = Number of links</li> 
- <li>rdev = Device ID (if special file)</li> 
- <li>size = Size in bytes</li> 
- <li>type = ["reg", "dir", "chr", "blk", "fifo", "lnk", "sock"]</li> 
- <li>uid = User ID</li> 
- </ul>
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.statvfs"></a><strong>statvfs</strong>&nbsp;(path)</dt>
-<dd>
-
- (POSIX) Get filesystem statistics.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  path: Path to any file within the filesystem.
-	</li>
-	
-</ul>
-
-
-
-
-
-
-<h3>Return value:</h3>
-Table containing: <ul> 
- <li>bavail = available blocks</li> 
- <li>bfree = free blocks</li> 
- <li>blocks = number of fragments</li> 
- <li>frsize = fragment size</li> 
- <li>favail = available inodes</li> 
- <li>ffree = free inodes</li> 
- <li>files = inodes</li> 
- <li>flag = flags</li> 
- <li>fsid = filesystem ID</li> 
- <li>namemax = maximum filename length</li> 
- </ul>
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.symlink"></a><strong>symlink</strong>&nbsp;(oldpath, newpath)</dt>
-<dd>
-
- (POSIX) Create a symbolic link.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  oldpath: Path
-	</li>
-	
-	<li>
-	  newpath: Path
-	</li>
-	
-</ul>
-
-
-
-
-
-
-<h3>Return value:</h3>
-true
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.unlink"></a><strong>unlink</strong>&nbsp;(path)</dt>
-<dd>
-
- Delete a name and - if no links are left - the associated file.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  path: Path
-	</li>
-	
-</ul>
-
-
-
-
-
-
-<h3>Return value:</h3>
-true
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.utimes"></a><strong>utimes</strong>&nbsp;(path, actime, mtime)</dt>
-<dd>
-
- Change file last access and last modification time.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  path: Path
-	</li>
-	
-	<li>
-	  actime: Last access timestamp	(optional, default: current time)
-	</li>
-	
-	<li>
-	  mtime: Last modification timestamp (optional, default: actime)
-	</li>
-	
-</ul>
-
-
-
-
-
-
-<h3>Return value:</h3>
-true
-
-
-
-</dd>
-
-
-
-
-<dt><a name="nixio.fs.writefile"></a><strong>writefile</strong>&nbsp;(path, data)</dt>
-<dd>
-
- Write a buffer into a file truncating the file first.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  path: Path
-	</li>
-	
-	<li>
-	  data: Data to write
-	</li>
-	
-</ul>
-
-
-
-
-
-
-<h3>Return value:</h3>
-true
-
-
-
-</dd>
-
-
 </dl>
-
-
-
 
 
 </div> <!-- id="content" -->

@@ -3,9 +3,9 @@
 sem_t thread_sem_lock;
 
 static int thread_sem_init(lua_State *L) {
-	uint8_t pshared = luaL_optinteger(L, 1, 0);
+	uint8_t pshared = luaL_optinteger(L, 1, 1);
 	uint8_t locks = luaL_optinteger(L, 2, 1);
-	sem_init(&thread_sem_lock, pshared, locks);
+	sem_init(&thread_sem_lock, pshared, locks); // currently limited to 1 sem ...needs rethinking 
 	lua_pushlightuserdata(L, &thread_sem_lock);
 
 	return 1;

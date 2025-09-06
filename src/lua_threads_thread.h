@@ -5,7 +5,7 @@
 
 #define MAX_THREADS 150 
 #define PTHREAD_STACK_MIN  16384
-#define STACK_SIZE  PTHREAD_STACK_MIN
+#define STACK_SIZE  PTHREAD_STACK_MIN * 10
 
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
@@ -26,11 +26,14 @@ extern "C" {
 #include <stdbool.h>
 #include <string.h>
 #include <time.h>
+#include <stdatomic.h>
 
 #include "lua_threads_mutex.h"
 #include "lua_threads_sem.h"
 #include "lua_threads_attr.h"
 #include "lua_threads_cond.h"
+#include "lua_threads_thread_buf.h"
+#include "lua_threads_thread_queue.h"
 
 #ifdef __cplusplus
 }
@@ -42,23 +45,30 @@ typedef enum {
 	COMPLETE,
 	ERROR,
 	OK,
+	START,
 } state_t;
 
 typedef struct {
 	pthread_t thread;
 	pthread_mutex_t mutex;
+	sem_t joinable;
 	pthread_attr_t attr;
 	pthread_cond_t wait_cond;
 	pthread_condattr_t cond_attr;
-	int id;
 	size_t tid;
 	sem_t sem;
-	state_t state;
-	bool run;
+
+	_Atomic int id;
+	_Atomic state_t state;
+	_Atomic bool run;
+	_Atomic bool done;
+
 	lua_State *TS;
 	lua_State *T;
 	const char *fn;
 	void *fn_data;
+	void *stack_addr;
+	size_t stack_size;
 	//luaL_Buffer *b;
 
 } threads_thread_t;

@@ -24,6 +24,7 @@ extern "C" {
 #include <time.h>
 #include <semaphore.h>
 
+#include "lua_threads_thread.h"
 
 #ifdef __cplusplus
 }

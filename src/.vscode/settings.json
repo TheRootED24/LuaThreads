@@ -1,0 +1,17 @@
+{
+    "Lua.diagnostics.disable": [
+        "lowercase-global"
+    ],
+    "files.associations": {
+        "semaphore.h": "c",
+        "bit": "c",
+        "compare": "c",
+        "cstddef": "c",
+        "string": "c",
+        "optional": "c",
+        "limits": "c",
+        "memory": "c",
+        "new": "c",
+        "functional": "c"
+    }
+}

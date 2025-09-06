@@ -18,8 +18,8 @@ local function main(arg)
 	local t0 = thread.new();
 
 	-- set thread attr's to dethached
-	ret = thread.attr.inherit_sched(t0, "inherit"); -- set thread t0->attr detached state
-	ret, sched = thread.attr.inherit_sched(t0); -- set thread t0->attr detached state
+	ret = thread.attr.schedinherit(t0, "inherit"); -- set thread t0->attr detached state
+	ret, sched = thread.attr.schedinherit(t0); -- set thread t0->attr detached state
 	print("Sched: ", sched, ret);
 	print("\n----- Start Tests -----\n");
 

@@ -26,7 +26,7 @@ project(
 
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
 
-add_library(threads SHARED lua_threads.c lua_threads_thread.c lua_threads_mutex.c lua_threads_sem.c lua_threads_attr.c lua_threads_cond.c
+add_library(threads SHARED lua_threads.c lua_threads_thread.c lua_threads_mutex.c lua_threads_sem.c lua_threads_attr.c lua_threads_cond.c lua_threads_thread_buf.c lua_threads_thread_queue.c
 )
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fpic")

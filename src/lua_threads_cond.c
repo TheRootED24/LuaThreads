@@ -19,19 +19,6 @@ static int thread_cond_destroy(lua_State *L) {
 	return 1;
 }
 
-/*
-static int thread_cond_cons_init(lua_State *L) {
-	int ret = -1;
-	if(lua_isuserdata(L, 1)) {
-		pthread_cond_t *cond = (pthread_cond_t *)lua_topointer(L, 1);
-		ret = pthread_cond_init(cond, NULL);
-	}
-	lua_pushinteger(L, ret);
-
-	return 1;
-};
-*/
-
 static int thread_cond_wait(lua_State *L) {
 	int ret = -1;
 	if(lua_isuserdata(L, 1) && lua_isuserdata(L, 2)) {
@@ -62,7 +49,7 @@ static int thread_cond_timedwait(lua_State *L) {
 			sec = (time_t)luaL_optinteger(L, 3, 0);
 			nsec = luaL_optlong(L, 4, 0);
 		}
-//ETIMEDOUT = 110
+
 		struct timespec ts;
 		clock_gettime(CLOCK_REALTIME, &ts);
 		ts.tv_sec += sec;
@@ -121,7 +108,7 @@ void lua_threads_open_thread_cond(lua_State *L) {
 	lua_newtable(L);
 	luaL_register(L, NULL, thread_cond_lib_m);
 	lua_setfield(L, -2, COND);
-	// thread_sem
+	// thread_cond
 	luaL_newmetatable(L, "LuaBook.thread_cond");
 	lua_pushstring(L, "__index");
 	lua_pushvalue(L, -2);  /* pushes the metatable */

@@ -1,7 +1,7 @@
-#ifndef LUA_THREADS_H
-#define LUA_THREADS_H
+#ifndef THREADS_QUEUE_H
+#define THREADS_QUEUE_H
 
-#define THREADS "threads"
+#define QUEUE "queue"
 
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
@@ -16,22 +16,16 @@
 #include <lua.hpp>
 extern "C" {
 #endif
-// EXTRA C LIBS
-#include <string.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <pthread.h>
-#include <semaphore.h>
 
-#include "lua_threads_thread_buf.h"
-#include "lua_threads_sem.h"
-#include "lua_threads_mutex.h"
+// STANDARD C LIBS
+#include <stdint.h>
+#include <pthread.h>
 #include "lua_threads_thread.h"
 
 #ifdef __cplusplus
 }
 #endif
-int threads_errs(lua_State *L);
+
+void lua_threads_open_thread_queue(lua_State *L);
 
 #endif

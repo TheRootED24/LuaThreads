@@ -1,47 +1,83 @@
 #include "lua_threads_thread.h"
 
-pthread_mutex_t main_lock;
-sem_t main_sem_lock;
-sem_t sem_lock;
+// MAIN THREAD LOCK
+pthread_mutex_t main_lock = PTHREAD_MUTEX_INITIALIZER;
 
-static uint8_t threads[MAX_THREADS] = {0};
-static int thread_lid = 0;
+// JOIN && CREATE LOCKS
+pthread_mutex_t thread_create_lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t thread_join_lock = PTHREAD_MUTEX_INITIALIZER;
 
-int active_threads 	= 0;
-int yielded_threads 	= 0;
-int completed_threads 	= 0;
-int joined_threads 	= 0;
-int thread_errs 	= 0;
+// NEW THREAD AND THREAD CHECK LOCKS
+pthread_mutex_t thread_new_lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t thread_check_lock = PTHREAD_MUTEX_INITIALIZER;
+
+// THREAD STATS LOCK 
+pthread_mutex_t thread_stats_lock = PTHREAD_MUTEX_INITIALIZER;
+
+_Atomic unsigned int active_threads 	= 0;
+_Atomic unsigned int yielded_threads 	= 0;
+_Atomic unsigned int completed_threads 	= 0;
+_Atomic unsigned int joined_threads 	= 0;
+_Atomic unsigned int thread_errs 	= 0;
+
+// lua thread object indexes
+// tables and 1 based index
+static int thread_lid = 1; 
 
 // forward function proto's
 static int thread_index(lua_State *L);
 static int thread_new_index(lua_State *L);
 static int thread_newt(lua_State * L);
 
+static int thread_stats(state_t state);
+//static void thread_update_state(threads_thread_t *t, state_t state);
+//static void thread_run_state(threads_thread_t *t, bool state);
+//static void thread_done_state(threads_thread_t *t, bool state);
+
+
 void* fn_lua(void *args) {
-	uint8_t fn_args = 0;
+	uint8_t fn_args = 1;
 	threads_thread_t *t = (threads_thread_t*)args;
 	if(t) {
-		lua_getglobal(t->T, t->fn);
-		lua_pushlightuserdata(t->T, t);
-		fn_args++;
+		pthread_mutex_lock(&t->mutex);
+			lua_getglobal(t->T, t->fn);
+			lua_pushlightuserdata(t->T, t);
+		pthread_mutex_unlock(&t->mutex);
 
 		if(t->fn_data) {
-			lua_pushlightuserdata(t->T, t->fn_data);
+			pthread_mutex_lock(&t->mutex);
+				lua_pushlightuserdata(t->T, t->fn_data);
+			pthread_mutex_unlock(&t->mutex);
 			fn_args++;
 		}
-
+		
+		
+		t->run = true;
+		t->state = WORKING;
+		t->done = false;
+		active_threads++;
 		lua_pcall(t->T, fn_args, 1, 0);
+		t->done = true;
+		thread_stats(t->state);
+
 		return (void *)0;
 	}
 	return (void *)1;
 };
 
 threads_thread_t *check_threads_thread(lua_State *L, int pos) {
+	pthread_mutex_lock(&thread_check_lock);
+	if(lua_istable(L, 1)) {
+		lua_getfield(L, 1, "ctx");
+		pos = -1;
+	}
+
 	void *ud = luaL_checkudata(L, pos, "LuaBook.threads_thread");
 	luaL_argcheck(L, ud != NULL, pos, "`threads_thread' expected");
+	pthread_mutex_unlock(&thread_check_lock);
 
 	return (threads_thread_t*)ud;
+	
 };
 
 static int thread_sleep(lua_State *L) {
@@ -60,21 +96,15 @@ static int thread_sleep(lua_State *L) {
 	return 0;
 };
 
-static int next_thread() {
-	if(active_threads < MAX_THREADS) {
-          return thread_lid++;
-        }
-
-	fprintf(stderr, "No thread slot avaiable ( available %d | active %d)\n", MAX_THREADS, active_threads);
-	return -1;
-};
-
+// called from main thread ALWAYS
 static int thread_new(lua_State * L) {
+	//pthread_mutex_lock(&thread_new_lock);
 	threads_thread_t *t = NULL;
-
+	//pthread_mutex_lock(&main_lock);
 	int nargs = lua_gettop(L);
-	if(nargs > 0)
+	if(nargs > 0) 
 		t = (threads_thread_t*)lua_touserdata(L, 1);
+	
 	else {
 		t = (threads_thread_t*)lua_newuserdata(L, sizeof(threads_thread_t));
 		memset(t, 0, sizeof(threads_thread_t));
@@ -84,27 +114,25 @@ static int thread_new(lua_State * L) {
 	lua_setmetatable(L, -2);
 
 	if(nargs == 0) {
-		t->id = next_thread();
+		
+		t->id = thread_lid++;
+		t->T = lua_newthread(L);
+		//t->done = false;
+		lua_pop(L, 1);
+
 		sem_init(&t->sem, 1, 1);  		// init thread semaphore
 		pthread_mutex_init(&t->mutex, NULL);	// init thread mutex
-		t->T = lua_newthread(L);  		// create lua thread
+		sem_init(&t->joinable, 1, 1);	// init thread mutex
 		pthread_attr_init(&t->attr);
-		lua_pop(L, 1);
-		t->TS = luaL_newstate();
-		void *stack_addr = lua_newuserdata(t->TS, STACK_SIZE);
-		pthread_attr_setstack(&t->attr, stack_addr, STACK_SIZE);
-                int res = pthread_attr_setschedpolicy(&t->attr, SCHED_FIFO);
-                int newprio = 0;
-		struct sched_param *param = (struct sched_param*)lua_newuserdata(L, sizeof(struct sched_param)); // create a newudata
-		memset(param, 0, sizeof(struct sched_param)); lua_pop(L, 1); // now pop it off the stack
-                param->sched_priority = t->id;
-		res = pthread_attr_setschedparam(&t->attr,(const struct sched_param*)param);
+
 	}
+	//pthread_mutex_unlock(&thread_new_lock);
 
 	return 1;
 };
 
 static int thread_newt(lua_State * L) {
+	pthread_mutex_lock(&main_lock);
 	thread_new(L);
 
 	lua_newtable(L);
@@ -121,128 +149,80 @@ static int thread_newt(lua_State * L) {
 	lua_settable(L, -3); // set the __newindex in the metatable (-3)
 
 	lua_setmetatable(L, -2);
+	pthread_mutex_unlock(&main_lock);
 
 	return 1;
 };
 
 static int thread_create(lua_State * L) {
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
-		threads_thread_t *t = check_threads_thread(L, -1);
-		lua_pop(L, 1);
-
-		t->fn = luaL_checkstring(L, 2);
-		t->state = WORKING;
-		t->run = true;
-		t->fn_data = NULL;
-
-		// pass a pointer or udata in t->fn_data
-		if(lua_islightuserdata(L, 3) || lua_isuserdata(L, 3))
-			t->fn_data = (void*)lua_topointer(L, 3);
-
-		// pass a pointer or udata in t->fn_data
-		if(lua_istable(L, 3)) {
-			lua_getfield(L, 3, "ctx");
-			threads_thread_t *tt = check_threads_thread(L, -1);
-
-			t->fn_data = (void*)tt;
-
-		}
-
-		// create the pthread and pass the lua fn and udata
-		if(pthread_create(&t->thread, &t->attr, fn_lua, t) != 0)
-			fprintf(stderr, "Failed to Start Thread\n");
-	}
-	lua_settop(L, 1);
-
-	return 1;
-};
-
-/*static int thread_create(lua_State * L) {
+	pthread_mutex_lock(&thread_create_lock);
 	threads_thread_t *t = check_threads_thread(L, 1);
-	t->fn = luaL_checkstring(L, 2);
-	t->state = WORKING;
-	t->run = true;
-	t->fn_data = NULL;
-
+	pthread_mutex_lock(&t->mutex);
+		t->fn = luaL_checkstring(L, 2);
+		t->fn_data = NULL;
+	pthread_mutex_unlock(&t->mutex);
+	//thread_update_state(t, WORKING);
+	//t->state = WORKING;
+	//thread_run_state(t, true);
+	
 	// pass a pointer or udata in t->fn_data
-	if(lua_islightuserdata(L, 3) == 1 || lua_isuserdata(L, 3))
-		t->fn_data = (void*)lua_topointer(L, 3);
-
-	// create the pthread and pass the lua cb and udata
-	if(pthread_create(&t->thread, NULL, fn_lua, t) != 0)
+	if(lua_islightuserdata(L, 3)){
+		pthread_mutex_lock(&t->mutex);
+			t->fn_data = (void*)lua_topointer(L, 3);
+		pthread_mutex_unlock(&t->mutex);
+	}
+		
+	// pass a pointer or udata in t->fn_data
+	if(lua_istable(L, 3)) {
+		lua_getfield(L, 3, "ctx");
+		threads_thread_t *tt =  (void*)lua_topointer(L, -1);
+		//printf("TT ID: %d*******T ID: %d**************************************************\n", tt->id, t->id);
+		pthread_mutex_lock(&t->mutex);
+			t->fn_data = (void*)tt;
+		pthread_mutex_unlock(&t->mutex);
+	}
+	
+	// create the pthread and pass the lua fn and udata
+	if(pthread_create(&t->thread, &t->attr, fn_lua, t) != 0)
 		fprintf(stderr, "Failed to Start Thread\n");
 
 	lua_settop(L, 1);
+	pthread_mutex_unlock(&thread_create_lock);
 	return 1;
-};*/
+};
 
 static int thread_join(lua_State *L) {
-	int ret = 1;
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
-		threads_thread_t *t = check_threads_thread(L, -1);
+	pthread_mutex_lock(&thread_join_lock);
+	threads_thread_t *t = check_threads_thread(L, 1);
+	
+	int ret = -1;
+	ret = pthread_join(t->thread, NULL);
 
-		bool force;
-		if(lua_isboolean(L, 2))
-			force = true;
-
-		if(force && t->run) {
-			pthread_mutex_lock(&main_lock);
-				t->run = false;
-				if(active_threads > 0) {
-					--active_threads;
-					++completed_threads;
-				}
-			pthread_mutex_unlock(&main_lock);
-		}
-		// destroy the pthread
-		void *res = NULL;
-		if(t->thread)
-			ret = pthread_join(t->thread, res);
-
-		if(ret != 0 )
-			fprintf(stderr, "failed to join thread (id: %d)\n", t->id);
-
-		if(ret == 0) {
-			sem_destroy(&t->sem);
-			pthread_mutex_destroy(&t->mutex);
-			t->T = NULL;
-			threads[t->id] = 0;
-		}
-	}
+	if(ret != 0 )
+		fprintf(stderr, "failed to join thread (id: %d)\n", t->id);
+	
 	lua_pushinteger(L, ret);
-
+	pthread_mutex_unlock(&thread_join_lock);
 	return 1;
 };
 
 static int thread_resume(lua_State *L) {
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
-		threads_thread_t *t = check_threads_thread(L, -1);
-		pthread_mutex_lock((&t->mutex));
-			t->state = WORKING;
-		pthread_mutex_unlock((&t->mutex));
-		pthread_mutex_lock(&main_lock);
-			++active_threads;
-			--yielded_threads;
-		pthread_mutex_unlock(&main_lock);
+	threads_thread_t *t = check_threads_thread(L, 1);
+	if(t->state == SUSPENDED) {
+		t->state = WORKING;
+		thread_stats(WORKING);
 	}
 
 	return 0;
 };
 
 static int thread_yield(lua_State *L) {
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
-		threads_thread_t *t = check_threads_thread(L, -1);
-		pthread_mutex_lock((&t->mutex));
+	if(lua_istable(L, 1) || lua_isuserdata(L, 1)) {
+		threads_thread_t *t = check_threads_thread(L, 1);
+		if(t->state == WORKING) {
 			t->state = SUSPENDED;
-		pthread_mutex_unlock((&t->mutex));
-		pthread_mutex_lock(&main_lock);
-			--active_threads;
-			++yielded_threads;
-		pthread_mutex_unlock(&main_lock);
+			thread_stats(SUSPENDED);
+		}
 	}
 	sched_yield();
 
@@ -250,167 +230,81 @@ static int thread_yield(lua_State *L) {
 };
 
 static int thread_cancel(lua_State *L) {
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
-		threads_thread_t *t = check_threads_thread(L, -1);
+	threads_thread_t *t = check_threads_thread(L, 1);
 
-		pthread_mutex_lock((&t->mutex));
-			int ret = pthread_cancel(t->thread);
-		pthread_mutex_unlock((&t->mutex));
-		lua_pushinteger(L, ret);
-
-		return 1;
-	}
-	lua_pushnil(L);
+	pthread_mutex_lock(&main_lock);
+	pthread_mutex_lock((&t->mutex));
+		int ret = pthread_cancel(t->thread);
+	pthread_mutex_unlock((&t->mutex));
+	pthread_mutex_unlock(&main_lock);
+	lua_pushinteger(L, ret);
 
 	return 1;
 };
 
 static int thread_complete(lua_State *L) {
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
-		threads_thread_t *t = check_threads_thread(L, -1);
-		pthread_mutex_lock((&t->mutex));
-			t->state = OK;
-			t->run = false;
-		pthread_mutex_unlock((&t->mutex));
-		if(active_threads > 0) {
-			pthread_mutex_lock(&main_lock);
-				--active_threads;
-				++completed_threads;
-			pthread_mutex_unlock(&main_lock);
-		}
-	}
+	threads_thread_t *t = check_threads_thread(L, 1);
+	t->state = OK;
+	t->run = false;
+	thread_stats(OK);
+
 	sched_yield();
 
 	return 0;
 };
 
 static int thread_error(lua_State *L) {
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
-		threads_thread_t *t = check_threads_thread(L, -1);
-		pthread_mutex_lock((&t->mutex));
-			t->state = ERROR;
-			t->run = false;
-		pthread_mutex_unlock((&t->mutex));
-		pthread_mutex_lock(&main_lock);
-			++thread_errs;
-		pthread_mutex_unlock(&main_lock);
-	}
+	threads_thread_t *t = check_threads_thread(L, 1);
+	t->state = ERROR;
+	t->run = false;
+	thread_stats(ERROR);
 
 	return 0;
 };
 
 static int thread_state(lua_State *L) {
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
-		threads_thread_t *t = check_threads_thread(L, -1);
-		pthread_mutex_lock((&t->mutex));
-			lua_pushinteger(L, t->state);
-		pthread_mutex_unlock((&t->mutex));
-
-		return 1;
-	}
-	lua_pushnil(L);
-
+	threads_thread_t *t = check_threads_thread(L, 1);
+	lua_pushinteger(L, t->state);
+		
 	return 1;
 };
 
 static int thread_run(lua_State *L) {
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
-		threads_thread_t *t = check_threads_thread(L, -1);
-		pthread_mutex_lock((&t->mutex));
-			lua_pushboolean(L, t->run);
-		pthread_mutex_unlock((&t->mutex));
-
-		return 1;
-	}
-	lua_pushnil(L);
+	threads_thread_t *t = check_threads_thread(L, 1);
+	lua_pushboolean(L, t->run);
 
 	return 1;
 };
 
 static int thread_id(lua_State *L) {
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
-		threads_thread_t *t = check_threads_thread(L, -1);
-		pthread_mutex_lock((&t->mutex));
-			lua_pushinteger(L, t->id);
-		pthread_mutex_unlock((&t->mutex));
-
-		return 1;
-	}
-	lua_pushnil(L);
+	threads_thread_t *t = check_threads_thread(L, 1);
+	lua_pushinteger(L, t->id);
 
 	return 1;
 };
 
 static int thread_tid(lua_State *L) {
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
-		threads_thread_t *t = check_threads_thread(L, -1);
-		pthread_mutex_lock((&t->mutex));
-			lua_pushinteger(L, (size_t)pthread_self());
-		pthread_mutex_unlock((&t->mutex));
-
-		return 1;
-	}
-	lua_pushnil(L);
-
-	return 1;
-};
-
-static int thread_sem(lua_State *L) {
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
-		threads_thread_t *t = check_threads_thread(L, -1);
-		pthread_mutex_lock(&main_lock);
-			lua_pushlightuserdata(L, &t->sem);
-		pthread_mutex_unlock(&main_lock);
-
-		return 1;
-	}
-	lua_pushnil(L);
-
-	return 1;
-};
-
-static int thread_mutex(lua_State *L) {
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
-		threads_thread_t *t = check_threads_thread(L, -1);
-		pthread_mutex_lock(&main_lock);
-			lua_pushlightuserdata(L, &t->mutex);
-		pthread_mutex_unlock(&main_lock);
-
-		return 1;
-	}
-	lua_pushnil(L);
+	threads_thread_t *t = check_threads_thread(L, 1);
+	pthread_mutex_lock((&t->mutex));
+		lua_pushinteger(L, (size_t)pthread_self());
+	pthread_mutex_unlock((&t->mutex));
 
 	return 1;
 };
 
 static int thread_exit(lua_State *L) {
-	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
-		threads_thread_t *t = check_threads_thread(L, -1);
-		size_t ret = t->tid;
-		pthread_exit((void*)ret);
-	}
-	else
-		pthread_exit(NULL);
+	threads_thread_t *t = check_threads_thread(L, 1);
+	size_t ret = t->tid;
+	pthread_exit((void*)ret);
 
-	return 1;
+	return 0;
 };
 
 static int thread_new_index(lua_State *L) {
 	if(lua_istable(L, 1)) {
 		const char *key = luaL_checkstring(L, 2);
-		printf("KEY: %s\n", key);
+		printf("KEY: %s CANNOT BE UPDATED !\n", key);
 		lua_pop(L, 1);
-
 	}
 
 	return 0;
@@ -421,23 +315,21 @@ static int thread_index(lua_State *L) {
 		const char *key = luaL_checkstring(L, 2);
 		lua_pop(L, 1);
 
-		if(strcmp(key, "id") == 0 ) {
+		if(key && strcmp(key, "id") == 0 ) {
 			thread_id(L);
 		}
-		else if(strcmp(key, "tid") == 0 ) {
+		else if(key && strcmp(key, "tid") == 0 ) {
 			thread_tid(L);
 		}
-		else if(strcmp(key, "state") == 0 ) {
+		else if(key && strcmp(key, "state") == 0 ) {
 			thread_state(L);
 		}
-		else if(strcmp(key, "run") == 0 ) {
+		else if(key && strcmp(key, "run") == 0 ) {
 			thread_run(L);
 		}
-		else if(strcmp(key, "mutex") == 0 ) {
-			thread_mutex(L);
-		}
-		else if(strcmp(key, "sem") == 0 ) {
-			thread_sem(L);
+		else if(key && strcmp(key, "thread") == 0 ) {
+			lua_getfield(L, 1, "ctx");
+			thread_new(L);
 		}
 		else
 			lua_pushnil(L);
@@ -449,16 +341,61 @@ static int thread_index(lua_State *L) {
 	return 1;
 };
 
+static int thread_stats(state_t state){
+	int ret = -1;
+	switch(state)
+	{
+		case START:
+		{
+			active_threads++;
+			ret = 0;
+			break;
+		};
+		case WORKING:
+		{
+			yielded_threads--;
+			active_threads++;
+			ret = 0;
+			break;
+		};
+		case SUSPENDED:
+		{
+
+			yielded_threads++;
+			active_threads--;
+			ret = 0;
+			break;
+		}
+		case OK:
+		{
+			if(active_threads > 0 ) {
+				active_threads--;
+				completed_threads++;
+			}
+			ret = 0;
+			break;
+		};
+		case ERROR:
+		{
+			thread_errs++;
+			ret = 0;
+			break;
+		}
+		default:
+		{
+			ret = 1;
+			break;
+		}
+
+	}
+	return ret;
+}
 
 static int thread_gc(lua_State *L) {
 	threads_thread_t *t = (threads_thread_t*)lua_topointer(L, 1);
-	//printf("REMOVING THREAD %d\n", t->id);
+	printf("REMOVING THREAD %d\n", t->id);
 	sem_destroy(&t->sem);
 	pthread_mutex_destroy(&t->mutex);
-
-	sem_destroy(&main_sem_lock);
-	pthread_mutex_destroy(&main_lock);
-	lua_close(t->TS);
 
 	return 0;
 };
@@ -466,8 +403,6 @@ static int thread_gc(lua_State *L) {
 static const struct luaL_reg threads_thread_lib_f[] = {
 	{ "resume",	thread_resume	},
 	{ "yield",	thread_yield	},
-	{ "mutex",	thread_mutex,	},
-	{ "sem",	thread_sem,	},
 	{ "complete",	thread_complete	},
 	{ "run", 	thread_run	},
 	{ "id",		thread_id	},
@@ -484,8 +419,6 @@ static const struct luaL_reg threads_thread_lib_m[] = {
 	{ "create",	thread_create	},
 	{ "resume",	thread_resume	},
 	{ "yield",	thread_yield	},
-	{ "mutex",	thread_mutex,	},
-	{ "sem",	thread_sem,	},
 	{ "complete",	thread_complete	},
 	{ "run", 	thread_run	},
 	{ "join",	thread_join	},
@@ -522,6 +455,10 @@ void lua_threads_open_threads_thread (lua_State *L) {
 	lua_threads_open_thread_cond(L);
 	// open thread attr module
 	lua_threads_open_thread_attr(L);
+	// open thread buf module
+	lua_threads_open_thread_buf(L);
+	// open thread queue module
+	lua_threads_open_thread_queue(L);
 
 	lua_pop(L, 1);
 };

@@ -22,11 +22,12 @@ function print_ms(m_id, m_state, s_id, s_state)
 end
 
 function print10(t, tt)
+	thread.mutex.lock(mutex)
 	local cnt = 0;
 	local t = thread.new(t);
 	local tt = thread.new(tt);
-	thread.mutex.lock(mutex)
-		print(string.format("Thread: %d Has lock %d", t.id, t.state))
+		print(t.id,tt.id)
+		print(string.format("Thread: %d Pthread: %d Has lock %d", t.id, t.tid , t.state))
 		for i=1, loops do
 			if(tt) then print_ms(t.id, t.state, tt.id, tt.state) end
 			cnt = cnt + 1;
@@ -34,7 +35,7 @@ function print10(t, tt)
 		end
 	thread.mutex.unlock(mutex)
 	thread.complete(t)
-	return t
+	return
 end
 
 local function main(...)
@@ -51,7 +52,7 @@ local function main(...)
 	local t10 = thread.new()
 
 	print("Start Threads")
-
+	print("ID :"..t2.id)
 	thread.create(t1, "print10", t2)
 	thread.create(t2, "print10", t1)
 	thread.create(t3, "print10", t4)
@@ -61,7 +62,8 @@ local function main(...)
 	
 	thread.create(t7, "print10", t8)
 	thread.create(t8, "print10", t9)
-	thread.create(t10, "print10",t9)
+	thread.create(t9, "print10", t10)
+	--thread.create(t10, "print10")
 	
 
 
@@ -80,15 +82,14 @@ local function main(...)
 	t7 = thread.join(t7)
 	t8 = thread.join(t8)
 	t9 = thread.join(t9)
-	t10 = thread.join(t10)
+	--t10 = thread.join(t10)
 
-	print(threads.active())
-	
+		
 
 
 	print("All Threads Finished")
 
-	print( t1, t2, t3, t4, t5, t6)
+	--print( t1, t2, t3, t4, t5, t6)
 end
 
 main(...)

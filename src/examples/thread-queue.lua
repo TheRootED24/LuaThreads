@@ -2,7 +2,9 @@ require "threads"
 local thread = threads.thread;
 
 local mutex = thread.mutex.init();
+local buf = thread.buf.new()
 
+buf = { true, data = nil}
 local wait_cond = thread.cond.new();
 local data_ready = 0;
 
@@ -17,7 +19,8 @@ function producer(t)
 	print("Producer: Producing data...");
 	thread.sleep((wait + 1), 0);	-- Sleep to simulate proccesing data
 	thread.mutex.lock(mutex);
-	data_ready = 1;
+	buf[1] = false;
+    buf.data = "it works rora"
 	print("Producer: Data is ready. Signaling consumer.");
 	thread.cond.signal(wait_cond); -- Signal the condition variable
 	thread.mutex.unlock(mutex);
@@ -32,7 +35,7 @@ function consumer(ct, pt)
 	thread.mutex.lock(mutex);
 	local ret = 0;
 	local ts = {wait, 0}
-	while(data_ready ~= 1 and trys > 0 ) do
+	while(buf[1] and trys > 0 ) do
 		ret = thread.cond.timedwait(wait_cond, mutex, ts);
 		if(ret == ETIMEDOUT ) then
 			print("Consumer: Timed out waiting for data.");
@@ -43,9 +46,10 @@ function consumer(ct, pt)
 			return;
 		end
 	end
-	if(data_ready == 1) then
-		print("Consumer: Data received!");
-
+	if not(buf[1]) then
+		print("Consumer: Data received! ", buf.data);
+        buf[1] = false;
+        buf.data = "gonein60seconds"
 	else
 		print("Consumer: Too slow sucker joe!");
 	end
@@ -65,7 +69,7 @@ local function main(...)
 
 	thread.join(pt);
 	thread.join(ct);
-
+    if(buf[1]) then print(buf.data) end
 	thread.mutex.destroy(mutex);
 	thread.cond.destroy(wait_cond);
 

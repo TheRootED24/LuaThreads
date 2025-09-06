@@ -1,18 +1,24 @@
 #include "lua_threads_mutex.h"
 
-pthread_mutex_t thread_lock;
-pthread_mutex_t pc_mutex;
+pthread_mutex_t thread_lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t pc_mutex  = PTHREAD_MUTEX_INITIALIZER;;
+
 
 static int thread_mutex_init(lua_State *L) {
 	if(lua_istable(L, 1)) {
-		lua_getfield(L, 1, "ctx");
-		threads_thread_t *t = check_threads_thread(L, -1);
-		pthread_mutex_init(&t->mutex, NULL);
-		lua_pushlightuserdata(L, &t->mutex);
+		threads_thread_t *t = check_threads_thread(L, 1);
+		//pthread_mutex_init(&t->mutex, NULL);
+		lua_pushlightuserdata(L, &t->mutex); // thread internal mutex
 
 		return 1;
 	}
-	lua_pushlightuserdata(L, &thread_lock);
+
+	const char *opt = luaL_optstring(L, 1, "main");
+
+	if(strcmp(opt, "main")) 
+		lua_pushlightuserdata(L, &thread_lock);  // main thread lock 
+	else
+		lua_pushlightuserdata(L, &pc_mutex); // conditionals 
 
 	return 1;
 };
@@ -64,4 +70,5 @@ void lua_threads_open_thread_mutex(lua_State *L) {
 	lua_settable(L, -3);  /* metatable.__index = metatable */
 	luaL_openlib(L, NULL, thread_mutex_lib_m, 0);
 	lua_pop(L, 1);
+
 };

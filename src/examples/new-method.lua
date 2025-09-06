@@ -1,6 +1,6 @@
 require "threads"
 local thread = threads.thread;
-local mutex = thread.mutex.init();
+local mutex = thread.mutex.init("thread");
 function print_tid(t)
 	local t = thread.new(t);
 	print(t.id)
