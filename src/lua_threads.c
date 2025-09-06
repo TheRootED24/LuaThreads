@@ -2,8 +2,6 @@
 // beta version
 #include "lua_threads.h"
 
-//extern pthread_mutex_t thread_stats_lock;
-
 extern int thread_errs;
 extern int active_threads;
 extern int yielded_threads;

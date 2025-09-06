@@ -28,12 +28,7 @@ static int thread_lid = 1;
 static int thread_index(lua_State *L);
 static int thread_new_index(lua_State *L);
 static int thread_newt(lua_State * L);
-
 static int thread_stats(state_t state);
-//static void thread_update_state(threads_thread_t *t, state_t state);
-//static void thread_run_state(threads_thread_t *t, bool state);
-//static void thread_done_state(threads_thread_t *t, bool state);
-
 
 void* fn_lua(void *args) {
 	uint8_t fn_args = 1;
@@ -50,7 +45,6 @@ void* fn_lua(void *args) {
 			pthread_mutex_unlock(&t->mutex);
 			fn_args++;
 		}
-		
 		
 		t->run = true;
 		t->state = WORKING;
@@ -98,9 +92,7 @@ static int thread_sleep(lua_State *L) {
 
 // called from main thread ALWAYS
 static int thread_new(lua_State * L) {
-	//pthread_mutex_lock(&thread_new_lock);
 	threads_thread_t *t = NULL;
-	//pthread_mutex_lock(&main_lock);
 	int nargs = lua_gettop(L);
 	if(nargs > 0) 
 		t = (threads_thread_t*)lua_touserdata(L, 1);
@@ -117,7 +109,6 @@ static int thread_new(lua_State * L) {
 		
 		t->id = thread_lid++;
 		t->T = lua_newthread(L);
-		//t->done = false;
 		lua_pop(L, 1);
 
 		sem_init(&t->sem, 1, 1);  		// init thread semaphore
@@ -126,7 +117,6 @@ static int thread_new(lua_State * L) {
 		pthread_attr_init(&t->attr);
 
 	}
-	//pthread_mutex_unlock(&thread_new_lock);
 
 	return 1;
 };
@@ -161,10 +151,7 @@ static int thread_create(lua_State * L) {
 		t->fn = luaL_checkstring(L, 2);
 		t->fn_data = NULL;
 	pthread_mutex_unlock(&t->mutex);
-	//thread_update_state(t, WORKING);
-	//t->state = WORKING;
-	//thread_run_state(t, true);
-	
+
 	// pass a pointer or udata in t->fn_data
 	if(lua_islightuserdata(L, 3)){
 		pthread_mutex_lock(&t->mutex);
@@ -176,7 +163,6 @@ static int thread_create(lua_State * L) {
 	if(lua_istable(L, 3)) {
 		lua_getfield(L, 3, "ctx");
 		threads_thread_t *tt =  (void*)lua_topointer(L, -1);
-		//printf("TT ID: %d*******T ID: %d**************************************************\n", tt->id, t->id);
 		pthread_mutex_lock(&t->mutex);
 			t->fn_data = (void*)tt;
 		pthread_mutex_unlock(&t->mutex);
